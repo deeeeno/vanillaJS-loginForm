@@ -11,7 +11,11 @@ class Login {
     modelEl
     confirmIdEl
     confirmPwEl
+    fontControlBoxEl
+    increaseFontBtnEl
+    decreaseFontBtnEl
     ERROR_MESSAGE_CLASS = 'border-red-600'
+    FONT_SIZE = 16
     constructor() {
         this.assignElement()
         this.addEvent()
@@ -20,6 +24,7 @@ class Login {
     assignElement() {
         this.formEl = document.getElementById('form')
         this.modalEl = document.getElementById('modal')
+        this.fontControlBoxEl = document.getElementById('font-control-box')
         this.idEl = this.formEl.querySelector('#id')
         this.idMsgEl = this.formEl.querySelector('#id-msg')
         this.pwEl = this.formEl.querySelector('#pw')
@@ -31,6 +36,10 @@ class Login {
         this.confirmPwEl = this.modalEl.querySelector('#confirm-pw')
         this.cancelBtnEl = this.modalEl.querySelector('#cancel-btn')
         this.approveBtnEl = this.modalEl.querySelector('#approve-btn')
+        this.increaseFontBtnEl =
+            this.fontControlBoxEl.querySelector('#increase-font-btn')
+        this.decreaseFontBtnEl =
+            this.fontControlBoxEl.querySelector('#decrease-font-btn')
     }
 
     addEvent() {
@@ -51,6 +60,14 @@ class Login {
         this.approveBtnEl.addEventListener(
             'click',
             this.onClickApproveBtn.bind(this)
+        )
+        this.increaseFontBtnEl.addEventListener(
+            'click',
+            this.onClickIncreaseBtn.bind(this)
+        )
+        this.decreaseFontBtnEl.addEventListener(
+            'click',
+            this.onClickDecreaseBtn.bind(this)
         )
     }
     onSubmit(e) {
@@ -84,7 +101,21 @@ class Login {
         alert('가입되었습니다 🥳')
         this.modalEl.close()
     }
-
+    setHtmlFont() {
+        document.querySelector('html').style.fontSize = `${this.FONT_SIZE}px`
+    }
+    onClickIncreaseBtn(e) {
+        this.FONT_SIZE += 1
+        this.setHtmlFont()
+        this.increaseFontBtnEl.disabled = this.FONT_SIZE === 20
+        this.decreaseFontBtnEl.disabled = this.FONT_SIZE === 12
+    }
+    onClickDecreaseBtn(e) {
+        this.FONT_SIZE -= 1
+        this.setHtmlFont()
+        this.increaseFontBtnEl.disabled = this.FONT_SIZE === 20
+        this.decreaseFontBtnEl.disabled = this.FONT_SIZE === 12
+    }
     setIdMsg(errno) {
         this.idMsgEl.innerText = this.idErrorMessage(errno)
         this.idEl.classList.toggle(this.ERROR_MESSAGE_CLASS, errno != 0)
@@ -136,7 +167,7 @@ class Login {
     idValidator(id) {
         if (id.length === 0) return 1
         if (id.length < 5 || id.length > 20) return 2
-        const wrong_word = id.match(/[^A-Za-z0-9\_\-]/g)
+        const wrong_word = id.match(/[^A-Za-z0-9_-]/g)
         if (wrong_word != null) return 2
         return 0
     }
