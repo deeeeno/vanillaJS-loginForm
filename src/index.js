@@ -86,9 +86,9 @@ class Login {
         const pwd = this.pwEl.value
         const pwdChk = this.pwdChkEl.value
 
-        const idErrno = this.idValidator(id)
-        const pwdErrno = this.pwdValidator(pwd)
-        const pwdChkErrno = this.pwdChkValidator(pwd, pwdChk)
+        const idErrno = this.validator('id', id)
+        const pwdErrno = this.validator('pwd', pwd)
+        const pwdChkErrno = this.validator('pwdChk', pwd, pwdChk)
 
         if (idErrno + pwdErrno + pwdChkErrno === 0) {
             this.setModalInfo(id, pwd)
@@ -127,6 +127,7 @@ class Login {
         this.decreaseFontBtnEl.disabled = this.FONT_SIZE === 12
     }
     setIdMsg(errno) {
+        console.log(errno)
         this.idMsgEl.innerText = this.ERR_MESSAGE[errno]
         this.idEl.classList.toggle(this.ERROR_MESSAGE_CLASS, errno != 0)
     }
@@ -146,7 +147,7 @@ class Login {
     onIdFocusOut(e) {
         //const writtenId = this.idEl.value
         const writtenId = e.target.value
-        const idErrno = this.idValidator(writtenId)
+        const idErrno = this.validator('id', writtenId)
         this.setIdMsg(idErrno)
     }
     /* password focus, focusout event handler*/
@@ -157,7 +158,7 @@ class Login {
     onPwdFocusOut(e) {
         //const writtenPwd = this.pwEl.value
         const writtenPwd = e.target.value
-        const pwErrno = this.pwdValidator(writtenPwd)
+        const pwErrno = this.validator('pwd', writtenPwd)
         this.setPwMsg(pwErrno)
     }
 
@@ -170,7 +171,7 @@ class Login {
         //const writtenPwdChk = this.pwdChkEl.value
         const writtenPwdChk = e.target.value
         const writtenPwd = this.pwEl.value
-        const pwChkErrno = this.pwdChkValidator(writtenPwd, writtenPwdChk)
+        const pwChkErrno = this.validator('pwdChk', writtenPwd, writtenPwdChk)
         this.setPwChkMsg(pwChkErrno)
     }
     /*
@@ -178,24 +179,20 @@ class Login {
     비밀번호: 8~16자. 영문 대/소문자, 숫자 사용 가능
     비밀번호 확인: 비밀번호와 일치
     */
-    idValidator(id) {
-        if (id.length === 0) return 'required'
-        const match = id.match(/[A-Za-z0-9_-]{5,20}/g)
-        const wrong_word = match ? match[0] : null
-        if (wrong_word !== id || wrong_word == null) return 'errorId'
-        return 0
-    }
-    pwdValidator(password) {
-        if (password.length === 0) return 'required'
-        const match = password.match(/[A-Za-z0-9]{8,16}/)
-        const wrong_word = match ? match[0] : null
-        if (wrong_word !== password || wrong_word == null) return 'errorPwd'
-
-        return 0
-    }
-    pwdChkValidator(password, check) {
-        if (check.length === 0) return 'required'
-        return password === check ? 0 : 'errorPwdChk'
+    validator(type, data, check) {
+        if (data.length === 0) return 'required'
+        const idReg = /^[A-Za-z0-9_-]{5,20}$/
+        const pwdReg = /^[A-Za-z0-9]{8,16}$/
+        switch (type) {
+            case 'id':
+                return idReg.test(data) ? 0 : 'errorId'
+            case 'pwd':
+                return pwdReg.test(data) ? 0 : 'errorPwd'
+            case 'pwdChk':
+                return check === data ? 0 : 'errorPwdChk'
+            default:
+                return
+        }
     }
 }
 
