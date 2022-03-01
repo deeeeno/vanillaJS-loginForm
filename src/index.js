@@ -19,6 +19,7 @@ class Login {
     constructor() {
         this.assignElement()
         this.addEvent()
+        //document.getElementById('id').focus()
     }
 
     assignElement() {
@@ -43,6 +44,7 @@ class Login {
     }
 
     addEvent() {
+        //window.addEventListener('load', () => this.idEl.focus())
         this.formEl.addEventListener('submit', this.onSubmit.bind(this))
         this.idEl.addEventListener('focus', this.onIdFocus.bind(this))
         this.idEl.addEventListener('focusout', this.onIdFocusOut.bind(this))
@@ -94,23 +96,23 @@ class Login {
         this.confirmPwEl.innerText = pwd
         this.modalEl.showModal()
     }
-    onClickCancelBtn(e) {
+    onClickCancelBtn() {
         this.modalEl.close()
     }
-    onClickApproveBtn(e) {
+    onClickApproveBtn() {
         alert('가입되었습니다 🥳')
         this.modalEl.close()
     }
     setHtmlFont() {
         document.querySelector('html').style.fontSize = `${this.FONT_SIZE}px`
     }
-    onClickIncreaseBtn(e) {
+    onClickIncreaseBtn() {
         this.FONT_SIZE += 1
         this.setHtmlFont()
         this.increaseFontBtnEl.disabled = this.FONT_SIZE === 20
         this.decreaseFontBtnEl.disabled = this.FONT_SIZE === 12
     }
-    onClickDecreaseBtn(e) {
+    onClickDecreaseBtn() {
         this.FONT_SIZE -= 1
         this.setHtmlFont()
         this.increaseFontBtnEl.disabled = this.FONT_SIZE === 20
@@ -129,32 +131,36 @@ class Login {
         this.pwdChkEl.classList.toggle(this.ERROR_MESSAGE_CLASS, errno != 0)
     }
     /* id focus, focusout event handler*/
-    onIdFocus(e) {
+    onIdFocus() {
         this.idMsgEl.innerText = ''
         this.idEl.classList.remove(this.ERROR_MESSAGE_CLASS)
     }
     onIdFocusOut(e) {
-        const writtenId = this.idEl.value
+        //const writtenId = this.idEl.value
+        const writtenId = e.target.value
         const idErrno = this.idValidator(writtenId)
         this.setIdMsg(idErrno)
     }
     /* password focus, focusout event handler*/
-    onPwdFocus(e) {
+    onPwdFocus() {
         this.pwEl.classList.remove(this.ERROR_MESSAGE_CLASS)
         this.pwMsgEl.innerText = ''
     }
     onPwdFocusOut(e) {
-        const writtenPwd = this.pwEl.value
+        //const writtenPwd = this.pwEl.value
+        const writtenPwd = e.target.value
         const pwErrno = this.pwdValidator(writtenPwd)
         this.setPwMsg(pwErrno)
     }
+
     /* pwdChk focus, focusout event handler*/
-    onPwdChkFocus(e) {
+    onPwdChkFocus() {
         this.pwdChkEl.classList.remove(this.ERROR_MESSAGE_CLASS)
         this.pwdChkMsgEl.innerText = ''
     }
     onPwdChkFocusOut(e) {
-        const writtenPwdChk = this.pwdChkEl.value
+        //const writtenPwdChk = this.pwdChkEl.value
+        const writtenPwdChk = e.target.value
         const writtenPwd = this.pwEl.value
         const pwChkErrno = this.pwdChkValidator(writtenPwd, writtenPwdChk)
         this.setPwChkMsg(pwChkErrno)
@@ -167,15 +173,17 @@ class Login {
     idValidator(id) {
         if (id.length === 0) return 1
         if (id.length < 5 || id.length > 20) return 2
-        const wrong_word = id.match(/[^A-Za-z0-9_-]/g)
-        if (wrong_word != null) return 2
+        const match = id.match(/[A-Za-z0-9_-]{5,20}/g)
+        const wrong_word = match ? match[0] : null
+        if (wrong_word !== id || wrong_word == null) return 2
         return 0
     }
     pwdValidator(password) {
         if (password.length === 0) return 1
-        if (password.length < 8 || password.length > 16) return 2
-        const wrong_word = password.match(/[^A-Za-z0-9]/g)
-        if (wrong_word != null) return 2
+        const match = password.match(/[A-Za-z0-9]{8,16}/)
+        const wrong_word = match ? match[0] : null
+        if (wrong_word !== password || wrong_word == null) return 2
+
         return 0
     }
     pwdChkValidator(password, check) {
