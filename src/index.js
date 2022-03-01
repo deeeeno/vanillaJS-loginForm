@@ -16,6 +16,14 @@ class Login {
     decreaseFontBtnEl
     ERROR_MESSAGE_CLASS = 'border-red-600'
     FONT_SIZE = 16
+    ERR_MESSAGE = {
+        0: '',
+        required: '필수 정보입니다.',
+        errorId:
+            '5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.',
+        errorPwd: '8~16자 영문 대 소문자, 숫자를 사용하세요.',
+        errorPwdChk: '비밀번호가 일치하지 않습니다.',
+    }
     constructor() {
         this.assignElement()
         this.addEvent()
@@ -119,15 +127,15 @@ class Login {
         this.decreaseFontBtnEl.disabled = this.FONT_SIZE === 12
     }
     setIdMsg(errno) {
-        this.idMsgEl.innerText = this.idErrorMessage(errno)
+        this.idMsgEl.innerText = this.ERR_MESSAGE[errno]
         this.idEl.classList.toggle(this.ERROR_MESSAGE_CLASS, errno != 0)
     }
     setPwMsg(errno) {
-        this.pwMsgEl.innerText = this.pwdErrorMessage(errno)
+        this.pwMsgEl.innerText = this.ERR_MESSAGE[errno]
         this.pwEl.classList.toggle(this.ERROR_MESSAGE_CLASS, errno != 0)
     }
     setPwChkMsg(errno) {
-        this.pwdChkMsgEl.innerText = this.pwdChkErrorMessage(errno)
+        this.pwdChkMsgEl.innerText = this.ERR_MESSAGE[errno]
         this.pwdChkEl.classList.toggle(this.ERROR_MESSAGE_CLASS, errno != 0)
     }
     /* id focus, focusout event handler*/
@@ -171,54 +179,23 @@ class Login {
     비밀번호 확인: 비밀번호와 일치
     */
     idValidator(id) {
-        if (id.length === 0) return 1
-        if (id.length < 5 || id.length > 20) return 2
+        if (id.length === 0) return 'required'
         const match = id.match(/[A-Za-z0-9_-]{5,20}/g)
         const wrong_word = match ? match[0] : null
-        if (wrong_word !== id || wrong_word == null) return 2
+        if (wrong_word !== id || wrong_word == null) return 'errorId'
         return 0
     }
     pwdValidator(password) {
-        if (password.length === 0) return 1
+        if (password.length === 0) return 'required'
         const match = password.match(/[A-Za-z0-9]{8,16}/)
         const wrong_word = match ? match[0] : null
-        if (wrong_word !== password || wrong_word == null) return 2
+        if (wrong_word !== password || wrong_word == null) return 'errorPwd'
 
         return 0
     }
     pwdChkValidator(password, check) {
-        if (check.length === 0) return 1
-        return password === check ? 0 : 2
-    }
-    /*
-    (공통) 빈 값일 경우: 필수 정보입니다.
-    [ID] 유효하지 않은 값일 경우: “5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.”
-    [비밀번호] 유효하지 않은 값일 경우: “8~16자 영문 대 소문자, 숫자를 사용하세요.”
-    [비밀번호 확인] 유효하지 않은 값일 경우: “비밀번호가 일치하지 않습니다.”
-    */
-    idErrorMessage(errno) {
-        const errorMessages = [
-            '',
-            '필수 정보입니다.',
-            '5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.',
-        ]
-        return errorMessages[errno]
-    }
-    pwdErrorMessage(errno) {
-        const errorMessages = [
-            '',
-            '필수 정보입니다.',
-            '8~16자 영문 대 소문자, 숫자를 사용하세요.',
-        ]
-        return errorMessages[errno]
-    }
-    pwdChkErrorMessage(errno) {
-        const errorMessages = [
-            '',
-            '필수 정보입니다.',
-            '비밀번호가 일치하지 않습니다.',
-        ]
-        return errorMessages[errno]
+        if (check.length === 0) return 'required'
+        return password === check ? 0 : 'errorPwdChk'
     }
 }
 
